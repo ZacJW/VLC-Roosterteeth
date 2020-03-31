@@ -40,7 +40,8 @@ function parse()
 			s,subStart = string.find(line, "^<title>")
 			subStart = 7
 			subEnd, e = string.find(line, "</title>")
-			item.title = string.sub(line, subStart + 1, subEnd - 1)
+			item.title = vlc.strings.resolve_xml_special_chars(string.sub(line, subStart + 1, subEnd - 1))
+			
 			break
 		end
 	end
