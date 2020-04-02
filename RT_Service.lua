@@ -1,3 +1,7 @@
+-- VLC-RoosterTeeth Video Discovery plugin
+-- Author: ZacJW
+
+limit = 1000 -- Edit this number
 function descriptor()
 	return { title = "RoosterTeeth Video Discovery", capabilities={} }
 end
@@ -21,9 +25,11 @@ end
 
 function main()
 	channels = {}
-	for x = 1, 10, 1 do
+	page = 1
+	loaded = 0
+	while true do
 
-		json, pos, err = parse_json("https://svod-be.roosterteeth.com/api/v1/episodes?per_page=12&order=desc&page=" .. tostring(x))
+		json, pos, err = parse_json("https://svod-be.roosterteeth.com/api/v1/episodes?per_page=12&order=desc&page=" .. tostring(page))
 		if json == nil then
 			vlc.msg.info(err)
 		end
@@ -40,9 +46,12 @@ function main()
 							channels[channel] = vlc.sd.add_node({title=channel})
 						end
 						channels[channel]:add_subitem({title = new_name, path = new_path, arturl = new_art})
+						loaded = loaded + 1
+						if loaded == limit then return nil end
 					end
 				end
 			end
 		end
+		page = page + 1
 	end
 end
